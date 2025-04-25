@@ -1,0 +1,34 @@
+myinvois/
+├── package.json
+├── README.md
+├── tsconfig.json
+├── src/
+│   ├── index.ts                    # Main entry point
+│   ├── client.ts                   # MyInvois client class
+│   ├── config.ts                   # Configuration interfaces
+│   ├── utils/
+│   │   ├── certificate-handler.ts  # Certificate utility
+│   │   ├── document-signer.ts      # Document signing logic
+│   │   ├── transformers.ts         # JSON transformation utilities
+│   │   └── http-client.ts          # Axios wrapper
+│   ├── models/
+│   │   ├── index.ts
+│   │   ├── invoice.ts              # Invoice model
+│   │   ├── party.ts                # Party (supplier/customer) model
+│   │   ├── item.ts                 # Line item model
+│   │   ├── address.ts              # Address model
+│   │   ├── tax.ts                  # Tax model
+│   │   └── document.ts             # Document model
+│   ├── types/
+│   │   ├── index.ts
+│   │   ├── invoice-types.ts        # Type definitions for invoices
+│   │   ├── party-types.ts          # Type definitions for parties
+│   │   └── common-types.ts         # Shared type definitions
+│   └── services/
+│       ├── auth-service.ts         # Authentication service
+│       ├── invoice-service.ts      # Invoice operations service
+│       └── document-service.ts     # Document operations service
+└── tests/
+    ├── client.test.ts
+    ├── models/
+    └── services/
