@@ -74,22 +74,15 @@ const tins = client.getAllAuthenticatedTINs();
 // Use authTIN parameter to specify which authentication to use
 await client.invoices.submitInvoice(
   signedInvoice,
-  "TAXPAYER_TIN_1",
   "TAXPAYER_TIN_1"
 );
 await client.documents.getDocumentStatus(
   "DOC_UUID",
-  "TAXPAYER_TIN_1",
   "TAXPAYER_TIN_1"
 );
 ```
 
-The SDK automatically manages and refreshes tokens for each TIN as needed. When making API calls, you can specify:
-
-- `taxpayerTIN`: The TIN the document is for/belongs to
-- `authTIN`: The TIN to use for authentication (which token to use)
-
-If `authTIN` is not provided, it defaults to using the `taxpayerTIN` for authentication.
+The SDK automatically manages and refreshes tokens for each TIN as needed. When making API calls, you can specify the `authTIN` parameter to determine which token to use for authentication.
 
 ## TIN Validation
 
@@ -101,7 +94,7 @@ const validationResult = await client.validateTaxpayerTIN(
   "C12345678901", // TIN to validate
   "BRN", // ID type (Business Registration Number)
   "201901234567", // ID value
-  "YOUR_AUTH_TIN" // Optional: TIN to use for authentication
+  "YOUR_AUTH_TIN" // TIN to use for authentication
 );
 
 // Check the result
@@ -169,7 +162,7 @@ const token = await client.authenticate();
 const token = await client.authenticateAsIntermediary("TAXPAYER_TIN");
 
 // Get a valid token for a specific TIN
-const token = await client.getToken("TAXPAYER_TIN");
+const token = await client.getToken("TIN");
 
 // Get all TINs with valid tokens
 const tins = client.getAllAuthenticatedTINs();
@@ -187,14 +180,12 @@ const signedInvoice = await client.invoices.signInvoice(invoice);
 // Submit an invoice
 const result = await client.invoices.submitInvoice(
   signedInvoice,
-  taxpayerTIN,
   authTIN
 );
 
 // Submit multiple invoices
 const results = await client.invoices.submitInvoices(
   signedInvoices,
-  taxpayerTIN,
   authTIN
 );
 
@@ -202,7 +193,6 @@ const results = await client.invoices.submitInvoices(
 await client.invoices.cancelInvoice(
   "DOCUMENT_UUID",
   "Cancellation reason",
-  taxpayerTIN,
   authTIN
 );
 ```
@@ -213,19 +203,17 @@ await client.invoices.cancelInvoice(
 // Get document status
 const status = await client.documents.getDocumentStatus(
   "DOCUMENT_UUID",
-  taxpayerTIN,
   authTIN
 );
 
 // Get submission details
 const details = await client.documents.getSubmissionDetails(
   "SUBMISSION_UUID",
-  taxpayerTIN,
   authTIN
 );
 
 // List documents
-const documents = await client.documents.listDocuments(taxpayerTIN, authTIN, {
+const documents = await client.documents.listDocuments(authTIN, {
   pageNo: 1,
   pageSize: 10,
   fromDate: "2023-01-01",

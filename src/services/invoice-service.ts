@@ -49,14 +49,13 @@ export class InvoiceService {
   /**
    * Submit a signed invoice
    * @param signedInvoice The signed invoice to submit
-   * @param taxpayerTIN The taxpayer's TIN (for whom the invoice is created)
    * @param authTIN The TIN to use for authentication
    * @returns A promise resolving to the submission result
    */
-  async submitInvoice(signedInvoice: SignedInvoice, taxpayerTIN?: string, authTIN?: string): Promise<any> {
+  async submitInvoice(signedInvoice: SignedInvoice, authTIN?: string): Promise<any> {
     console.log('signedInvoice', JSON.stringify(signedInvoice, null, 2));
     let documentB64: string = Buffer.from(JSON.stringify(signedInvoice)).toString('base64');
-    
+
     let documentToSubmit = {
       format: 'JSON',
       document: documentB64,
@@ -65,8 +64,7 @@ export class InvoiceService {
       //signature: signature
     };
 
-    // Use authTIN for authentication if provided, otherwise use taxpayerTIN
-    const token = await this.authService.getToken(authTIN || taxpayerTIN);
+    const token = await this.authService.getToken(authTIN);
 
     const headers = {
       'Content-Type': 'application/json',
@@ -79,9 +77,9 @@ export class InvoiceService {
     };
 
     console.log('payload', JSON.stringify(payload, null, 2));
-      // get the payload size in KB ::
-      //console.log('payload', JSON.stringify(signedDocuments[0]));
-      console.log('payload size', JSON.stringify(payload).length / 1024);
+    // get the payload size in KB ::
+    //console.log('payload', JSON.stringify(signedDocuments[0]));
+    console.log('payload size', JSON.stringify(payload).length / 1024);
 
     try {
       console.log('Submitting invoice to MyInvois:', payload);
@@ -97,13 +95,11 @@ export class InvoiceService {
   /**
    * Submit multiple signed invoices
    * @param signedInvoices The signed invoices to submit
-   * @param taxpayerTIN The taxpayer's TIN (for whom the invoices are created)
    * @param authTIN The TIN to use for authentication
    * @returns A promise resolving to the submission result
    */
-  async submitInvoices(signedInvoices: SignedInvoice[], taxpayerTIN?: string, authTIN?: string): Promise<any> {
-    // Use authTIN for authentication if provided, otherwise use taxpayerTIN
-    const token = await this.authService.getToken(authTIN || taxpayerTIN);
+  async submitInvoices(signedInvoices: SignedInvoice[], authTIN?: string): Promise<any> {
+    const token = await this.authService.getToken(authTIN);
 
     const headers = {
       'Content-Type': 'application/json',
@@ -147,18 +143,15 @@ export class InvoiceService {
     }
   }
 
-
   /**
    * Cancel an invoice
    * @param documentUuid The UUID of the document to cancel
    * @param reason The reason for cancellation
-   * @param taxpayerTIN The taxpayer's TIN (for whom the invoice was created)
    * @param authTIN The TIN to use for authentication
    * @returns A promise resolving to the cancellation result
    */
-  async cancelInvoice(documentUuid: string, reason: string, taxpayerTIN?: string, authTIN?: string): Promise<any> {
-    // Use authTIN for authentication if provided, otherwise use taxpayerTIN
-    const token = await this.authService.getToken(authTIN || taxpayerTIN);
+  async cancelInvoice(documentUuid: string, reason: string, authTIN?: string): Promise<any> {
+    const token = await this.authService.getToken(authTIN);
 
     const headers = {
       'Content-Type': 'application/json',
@@ -177,7 +170,7 @@ export class InvoiceService {
     } catch (error: any) {
       if (error.statusCode === 400) {
         const errorCode = error.responseData?.error?.code;
-        
+
         switch (errorCode) {
           case 'OperationPeriodOver':
             throw new Error('Cancellation period has expired (72 hours)');
